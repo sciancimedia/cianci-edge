@@ -23,6 +23,9 @@ pluginManagement {
         includeGroupByRegex("androidx.*")
       }
     }
+    // Espejo GCS de Maven Central primero: la ruta normal del compilador
+    // de Kotlin (vía releases de GitHub) devuelve 504 esta noche.
+    maven { url = uri("https://maven-central.storage-download.googleapis.com/maven2") }
     mavenCentral()
     gradlePluginPortal()
   }
@@ -40,6 +43,8 @@ dependencyResolutionManagement {
   repositories {
     //        mavenLocal()
     google()
+    // Espejo GCS de Maven Central (ver pluginManagement).
+    maven { url = uri("https://maven-central.storage-download.googleapis.com/maven2") }
     mavenCentral()
   }
 }
