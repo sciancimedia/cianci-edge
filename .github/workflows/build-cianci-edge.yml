@@ -10,14 +10,17 @@ jobs:
         with:
           distribution: temurin
           java-version: '21'
-      # Gradle 9.2.1 lo instala la acción oficial y queda CACHEADO entre
-      # corridas (~/.gradle completo: distribución + dependencias).
-      # Así la compilación NO depende de descargar el wrapper en cada
-      # corrida, que es donde los 504 de esta noche mataron las 1-9.
-      - name: Set up Gradle 9.2.1 (cached)
-        uses: gradle/actions/setup-gradle@v4
-        with:
-          gradle-version: '9.2.1'
+      # Gradle 9.2.1 viene DENTRO del repo (tools/gradle-dist/, en 3 partes
+      # verificadas por sha256): las corridas 1-10 murieron bajándolo
+      # (HTTP 504 de los proxies). Aquí no se descarga ningún instalador.
+      - name: Assemble Gradle 9.2.1 from repo
+        run: |
+          cat tools/gradle-dist/gradle-9.2.1-bin.zip.part-* > /tmp/gradle-9.2.1-bin.zip
+          cp tools/gradle-dist/gradle-9.2.1-bin.zip.sha256 /tmp/
+          cd /tmp
+          sha256sum -c gradle-9.2.1-bin.zip.sha256
+          unzip -q gradle-9.2.1-bin.zip -d "$HOME/gradle-dist"
+          echo "$HOME/gradle-dist/gradle-9.2.1/bin" >> "$GITHUB_PATH"
       - name: Build release APK
         run: |
           ok=0
