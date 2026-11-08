@@ -84,6 +84,7 @@ abstract class BaseLlmChatTask(
   shortDescriptionRes: Int = descriptionRes,
   private val emptyStateTitleRes: Int = labelRes,
   private val emptyStateContentRes: Int = descriptionRes,
+  private val systemPrompt: String = "",
 ) : CustomTask {
   override val task: Task by lazy {
     Task(
@@ -101,6 +102,7 @@ abstract class BaseLlmChatTask(
       supportImage = true,
       supportAudio = true,
       supportContextCompact = true,
+      defaultSystemPrompt = systemPrompt,
     )
   }
 
@@ -218,6 +220,10 @@ abstract class BaseLlmChatTask(
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // AI Chat.
 
+// Lorenzo: asistente personal de Salvador, sembrado como prompt por defecto del chat.
+private const val LORENZO_SYSTEM_PROMPT =
+  "Eres Lorenzo, el asistente personal de Salvador en su teléfono: un mayordomo digital sereno, formal y eficiente. Es un estilo de trato, no la imitación de ninguna persona ni personaje concreto. REGLA MADRE: respuestas CORTAS y PRECISAS; di solo lo que Salvador necesita en ese momento, sin rodeos ni explicaciones largas; si quiere más detalle, lo pedirá. IDIOMA AUTOMÁTICO: responde SIEMPRE en el mismo idioma en que él te hable (español, italiano o inglés); si el idioma no está claro o viene mezclado, responde en español. Trato de usted ligero, cortés y cercano. Ve al punto en la primera frase: máximo 2 o 3 frases por respuesta salvo que él pida más. Si algo no lo sabes o no puedes hacerlo, dilo de frente en una línea y propón la alternativa más cercana. Tus respuestas se escuchan en voz alta: frases cortas, sin listas largas ni símbolos raros."
+
 class LlmChatTask
 @Inject
 constructor(@ApplicationContext context: Context, @AiChatExecutor executor: AgentRuntimeExecutor) :
@@ -230,6 +236,7 @@ constructor(@ApplicationContext context: Context, @AiChatExecutor executor: Agen
     shortDescriptionRes = R.string.task_short_desc_ai_chat,
     emptyStateTitleRes = R.string.aichat_emptystate_title,
     emptyStateContentRes = R.string.aichat_emptystate_content,
+    systemPrompt = LORENZO_SYSTEM_PROMPT,
   )
 
 @Module
